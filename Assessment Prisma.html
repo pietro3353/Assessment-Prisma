@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionário de Saúde Mental e Assessment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #C6D19B;
+            --background: #F3F2EB;
+            --text-dark: #3a3a3a;
+            --text-light: #5e5e5e;
+            --surface: #FFFFFF;
+            --border-color: #E0E0E0;
+            --primary-darker: #b1be84;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+        }
+        .form-step, #landing-page {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .form-step {
+             display: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .progress-bar-fill {
+            transition: width 0.4s ease-in-out;
+        }
+        .likert-scale {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .likert-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .likert-label {
+            cursor: pointer;
+            padding: 0.75rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            min-width: 48px;
+            text-align: center;
+        }
+        
+        .likert-scale input[type="radio"] {
+            display: none;
+        }
+
+        .likert-scale input[type="radio"]:checked + .likert-label {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--text-dark);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .option-legend {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-align: center;
+            width: 80px;
+        }
+
+        .btn {
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--text-dark);
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-darker);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0,0,0,0.07), 0 3px 6px rgba(0,0,0,0.05);
+        }
+        .btn-secondary {
+            background-color: #e2e2e2;
+            color: var(--text-light);
+        }
+         .btn-secondary:hover {
+            background-color: #d1d1d1;
+        }
+        .standard-radio {
+            accent-color: var(--primary);
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        .standard-radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        .question-group {
+             border-bottom: 1px solid var(--border-color);
+             padding-bottom: 2rem;
+             margin-bottom: 2rem;
+        }
+        .question-group:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+        .page-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.125rem;
+            color: var(--text-light);
+        }
+        /* New Hero Styles */
+        .hero-visual-card {
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .hero-visual-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            background-color: white;
+        }
+        .hero-visual-card i {
+            font-size: 2.5rem;
+            color: var(--primary-darker);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="landing-page" class="w-full max-w-5xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="text-center md:text-left">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: var(--text-dark);">Avaliação de Saúde Mental e Bem-Estar no Trabalho</h1>
+                <p class="text-lg md:text-xl mb-8" style="color: var(--text-light);">Sua opinião é fundamental para construirmos um ambiente de trabalho mais saudável e produtivo. Este questionário é anônimo e confidencial.</p>
+                <button id="start-btn" class="btn btn-primary text-lg px-8 py-4 w-full md:w-auto">Iniciar Avaliação</button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="hero-visual-card text-center">
+                    <i class="fa-solid fa-brain mb-3"></i>
+                    <h3 class="font-semibold">Saúde Mental</h3>
+                </div>
+                <div class="hero-visual-card text-center">
+                    <i class="fa-solid fa-heart-pulse mb-3"></i>
+                    <h3 class="font-semibold">Bem-Estar</h3>
+                </div>
+                <div class="hero-visual-card text-center">
+                    <i class="fa-solid fa-shield-halved mb-3"></i>
+                    <h3 class="font-semibold">Confidencial</h3>
+                </div>
+                <div class="hero-visual-card text-center">
+                    <i class="fa-solid fa-seedling mb-3"></i>
+                    <h3 class="font-semibold">Crescimento</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-wrapper" class="w-full max-w-4xl mx-auto hidden">
+        <div id="quiz-container" class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-12">
+            
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-2xl font-bold text-left" id="step-title">Iniciando...</h2>
+                    <span id="progress-percentage" class="font-semibold text-lg" style="color: var(--primary-darker);">0%</span>
+                </div>
+                <div class="bg-gray-200 rounded-full h-2.5">
+                    <div id="progress-bar" class="h-2.5 rounded-full progress-bar-fill" style="width: 0%; background-color: var(--primary);"></div>
+                </div>
+            </div>
+
+            <form id="mental-health-form">
+                <!-- Step 1: Instructions -->
+                <div class="form-step" data-title="Instruções e Privacidade">
+                    <div class="instructions-content space-y-6">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--primary-darker);">Instruções</h3>
+                            <p class="text-center mb-6">Este questionário reúne perguntas sobre o ambiente de trabalho, sua saúde e seu nível de satisfação.</p>
+                            <ul class="space-y-3 text-gray-700">
+                                <li>As respostas são individuais e, por isso, pedimos que você responda com sinceridade a cada uma delas.</li>
+                                <li>A maioria das perguntas apresenta diversas alternativas. Marque a opção que, na sua opinião, melhor descreve a sua situação, escolhendo apenas uma resposta para cada pergunta.</li>
+                                <li>Se você possui mais de um emprego, oriente suas respostas exclusivamente às suas atividades nesta empresa.</li>
+                                <li>É fundamental que você responda a todas as perguntas. Caso tenha qualquer dúvida, não hesite em procurar o aplicador.</li>
+                            </ul>
+                        </div>
+                        <div class="border-t pt-6">
+                            <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--primary-darker);">Declaração de Privacidade</h3>
+                             <ul class="space-y-3 text-gray-700">
+                                <li>Todas as respostas são anônimas e confidenciais.</li>
+                                <li>Manter o sigilo das informações é parte dos nossos princípios éticos e reflete nosso compromisso em tratar a saúde mental com o respeito e a seriedade que ela merece.</li>
+                                <li>O objetivo desta pesquisa é construir uma visão verdadeira ("fotografia") do ambiente de trabalho, permitindo o desenvolvimento de ações concretas para a promoção do bem-estar e da saúde mental no ambiente de trabalho.</li>
+                                <li>As perguntas relacionadas à sua área de atuação e cargo são OPCIONAIS, uma vez que, dependendo do porte da empresa, esses dados podem tornar sua identidade identificável. Sinta-se à vontade para preenchê-las apenas se se sentir confortável.</li>
+                            </ul>
+                            <p class="mt-6 font-semibold text-center">Agradecemos sua colaboração e desejamos uma excelente participação!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Pessoa e local de trabalho -->
+                <div class="form-step" data-title="Pessoa e Local de Trabalho">
+                    <div class="space-y-6">
+                        <div><label for="s1q1" class="block mb-2 font-medium">Em que área ou departamento você trabalha?</label><input type="text" id="s1q1" name="s1q1" class="w-full p-3 border border-gray-300 rounded-lg" required></div>
+                        <div><label for="s1q2" class="block mb-2 font-medium">Qual é o seu sexo?</label><select id="s1q2" name="s1q2" class="w-full p-3 border border-gray-300 rounded-lg" required><option value="">Selecione...</option><option value="masculino">Masculino</option><option value="feminino">Feminino</option><option value="outro">Outro</option><option value="nao_dizer">Prefiro não dizer</option></select></div>
+                        <div>
+                            <p class="block mb-2 font-medium">Quantos anos você tem?</p>
+                            <div class="space-y-2 mt-2">
+                                <label class="standard-radio-label"><input type="radio" name="s1q3" value="ate_24" class="standard-radio" required> Até 24 anos</label>
+                                <label class="standard-radio-label"><input type="radio" name="s1q3" value="25_34" class="standard-radio" required> 25 - 34 anos</label>
+                                <label class="standard-radio-label"><input type="radio" name="s1q3" value="35_44" class="standard-radio" required> 35 - 44 anos</label>
+                                <label class="standard-radio-label"><input type="radio" name="s1q3" value="45_54" class="standard-radio" required> 45 - 54 anos</label>
+                                <label class="standard-radio-label"><input type="radio" name="s1q3" value="55_mais" class="standard-radio" required> 55 anos ou mais</label>
+                            </div>
+                        </div>
+                        <div><label for="s1q4" class="block mb-2 font-medium">Qual o seu cargo atual?</label><input type="text" id="s1q4" name="s1q4" class="w-full p-3 border border-gray-300 rounded-lg" required></div>
+                        <div class="space-y-2"><p class="font-medium">Você faz a supervisão de outros trabalhadores?</p><div class="flex items-center space-x-4"><label class="standard-radio-label"><input type="radio" name="s1q5" value="sim" class="standard-radio" required> Sim</label><label class="standard-radio-label"><input type="radio" name="s1q5" value="nao" class="standard-radio"> Não</label></div></div>
+                        <div class="space-y-2"><p class="font-medium">Você é efetivo nesta empresa?</p><label class="text-sm text-gray-500 block mb-2">(Tenho um contrato de trabalho de tempo indeterminado)</label><div class="flex items-center space-x-4"><label class="standard-radio-label"><input type="radio" name="s1q6" value="sim" class="standard-radio" required> Sim</label><label class="standard-radio-label"><input type="radio" name="s1q6" value="nao" class="standard-radio"> Não</label></div></div>
+                        <div class="space-y-2"><p class="font-medium">Você trabalha em tempo integral?</p><div class="flex items-center space-x-4"><label class="standard-radio-label"><input type="radio" name="s1q7" value="sim" class="standard-radio" required> Sim</label><label class="standard-radio-label"><input type="radio" name="s1q7" value="nao" class="standard-radio"> Não</label></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Trabalho e Atividades -->
+                <div class="form-step" data-title="Trabalho e Atividades">
+                     <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">A sua carga de trabalho é distribuída de modo desigual e pode se acumular?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s2q1_1" name="s2q1" value="1" required><label for="s2q1_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s2q1_2" name="s2q1" value="2"><label for="s2q1_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s2q1_3" name="s2q1" value="3"><label for="s2q1_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s2q1_4" name="s2q1" value="4"><label for="s2q1_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s2q1_5" name="s2q1" value="5"><label for="s2q1_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Com que frequência você não tem tempo para completar todas as suas tarefas de trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s2q2_1" name="s2q2" value="1" required><label for="s2q2_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s2q2_2" name="s2q2" value="2"><label for="s2q2_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s2q2_3" name="s2q2" value="3"><label for="s2q2_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s2q2_4" name="s2q2" value="4"><label for="s2q2_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s2q2_5" name="s2q2" value="5"><label for="s2q2_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">O seu trabalho requer que você esconda a sua opinião?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s2q3_1" name="s2q3" value="1" required><label for="s2q3_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s2q3_2" name="s2q3" value="2"><label for="s2q3_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s2q3_3" name="s2q3" value="3"><label for="s2q3_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s2q3_4" name="s2q3" value="4"><label for="s2q3_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s2q3_5" name="s2q3" value="5"><label for="s2q3_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Equilíbrio -->
+                <div class="form-step" data-title="Equilíbrio Pessoal e Profissional">
+                    <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">Há vezes que você precisa estar em casa como no trabalho ao mesmo tempo?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s3q1_1" name="s3q1" value="1" required><label for="s3q1_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s3q1_2" name="s3q1" value="2"><label for="s3q1_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s3q1_3" name="s3q1" value="3"><label for="s3q1_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s3q1_4" name="s3q1" value="4"><label for="s3q1_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s3q1_5" name="s3q1" value="5"><label for="s3q1_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você sente que o seu trabalho tira tanto a sua energia que provoca um efeito negativo na sua vida privada?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s3q2_1" name="s3q2" value="1" required><label for="s3q2_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s3q2_2" name="s3q2" value="2"><label for="s3q2_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s3q2_3" name="s3q2" value="3"><label for="s3q2_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s3q2_4" name="s3q2" value="4"><label for="s3q2_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s3q2_5" name="s3q2" value="5"><label for="s3q2_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">As exigências do seu trabalho interferem na sua vida privada e familiar?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s3q3_1" name="s3q3" value="1" required><label for="s3q3_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s3q3_2" name="s3q3" value="2"><label for="s3q3_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s3q3_3" name="s3q3" value="3"><label for="s3q3_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s3q3_4" name="s3q3" value="4"><label for="s3q3_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s3q3_5" name="s3q3" value="5"><label for="s3q3_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Por conta dos deveres relacionados ao seu trabalho, precisa fazer alterações de planos na sua vida privada?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s3q4_1" name="s3q4" value="1" required><label for="s3q4_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s3q4_2" name="s3q4" value="2"><label for="s3q4_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s3q4_3" name="s3q4" value="3"><label for="s3q4_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s3q4_4" name="s3q4" value="4"><label for="s3q4_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s3q4_5" name="s3q4" value="5"><label for="s3q4_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">O seu trabalho requer muito do seu tempo, o que afeta negativamente sua vida privada?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s3q5_1" name="s3q5" value="1" required><label for="s3q5_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s3q5_2" name="s3q5" value="2"><label for="s3q5_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s3q5_3" name="s3q5" value="3"><label for="s3q5_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s3q5_4" name="s3q5" value="4"><label for="s3q5_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s3q5_5" name="s3q5" value="5"><label for="s3q5_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Influência e Liberdade -->
+                <div class="form-step" data-title="Influência e Liberdade no Trabalho">
+                     <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você tem grande influência nas decisões sobre o seu trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s4q1_1" name="s4q1" value="1" required><label for="s4q1_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s4q1_2" name="s4q1" value="2"><label for="s4q1_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s4q1_3" name="s4q1" value="3"><label for="s4q1_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s4q1_4" name="s4q1" value="4"><label for="s4q1_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s4q1_5" name="s4q1" value="5"><label for="s4q1_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você tem influência sobre a velocidade com que trabalha?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s4q2_1" name="s4q2" value="1" required><label for="s4q2_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s4q2_2" name="s4q2" value="2"><label for="s4q2_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s4q2_3" name="s4q2" value="3"><label for="s4q2_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s4q2_4" name="s4q2" value="4"><label for="s4q2_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s4q2_5" name="s4q2" value="5"><label for="s4q2_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você tem influência sobre COMO faz o seu trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s4q3_1" name="s4q3" value="1" required><label for="s4q3_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s4q3_2" name="s4q3" value="2"><label for="s4q3_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s4q3_3" name="s4q3" value="3"><label for="s4q3_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s4q3_4" name="s4q3" value="4"><label for="s4q3_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s4q3_5" name="s4q3" value="5"><label for="s4q3_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você tem alguma influência sobre O QUE faz no trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s4q4_1" name="s4q4" value="1" required><label for="s4q4_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s4q4_2" name="s4q4" value="2"><label for="s4q4_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s4q4_3" name="s4q4" value="3"><label for="s4q4_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s4q4_4" name="s4q4" value="4"><label for="s4q4_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s4q4_5" name="s4q4" value="5"><label for="s4q4_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Oportunidades de Desenvolvimento -->
+                <div class="form-step" data-title="Oportunidades de Desenvolvimento">
+                     <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">O seu trabalho é variado?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s5q1_1" name="s5q1" value="1" required><label for="s5q1_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s5q1_2" name="s5q1" value="2"><label for="s5q1_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s5q1_3" name="s5q1" value="3"><label for="s5q1_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s5q1_4" name="s5q1" value="4"><label for="s5q1_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s5q1_5" name="s5q1" value="5"><label for="s5q1_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você faz o mesmo tipo de atividade diversas vezes?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s5q2_1" name="s5q2" value="1" required><label for="s5q2_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s5q2_2" name="s5q2" value="2"><label for="s5q2_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s5q2_3" name="s5q2" value="3"><label for="s5q2_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s5q2_4" name="s5q2" value="4"><label for="s5q2_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s5q2_5" name="s5q2" value="5"><label for="s5q2_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você tem a possibilidade de aprender coisas novas por meio do seu trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s5q3_1" name="s5q3" value="1" required><label for="s5q3_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s5q3_2" name="s5q3" value="2"><label for="s5q3_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s5q3_3" name="s5q3" value="3"><label for="s5q3_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s5q3_4" name="s5q3" value="4"><label for="s5q3_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s5q3_5" name="s5q3" value="5"><label for="s5q3_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você consegue usar as suas habilidades ou a sua experiência no trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s5q4_1" name="s5q4" value="1" required><label for="s5q4_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s5q4_2" name="s5q4" value="2"><label for="s5q4_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s5q4_3" name="s5q4" value="3"><label for="s5q4_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s5q4_4" name="s5q4" value="4"><label for="s5q4_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s5q4_5" name="s5q4" value="5"><label for="s5q4_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">O seu trabalho lhe dá a oportunidade de desenvolver as suas habilidades?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s5q5_1" name="s5q5" value="1" required><label for="s5q5_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s5q5_2" name="s5q5" value="2"><label for="s5q5_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s5q5_3" name="s5q5" value="3"><label for="s5q5_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s5q5_4" name="s5q5" value="4"><label for="s5q5_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s5q5_5" name="s5q5" value="5"><label for="s5q5_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 7: Significado do Trabalho -->
+                <div class="form-step" data-title="Significado do Trabalho">
+                     <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">O seu trabalho é significativo para você?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s6q1_1" name="s6q1" value="1" required><label for="s6q1_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s6q1_2" name="s6q1" value="2"><label for="s6q1_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s6q1_3" name="s6q1" value="3"><label for="s6q1_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s6q1_4" name="s6q1" value="4"><label for="s6q1_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s6q1_5" name="s6q1" value="5"><label for="s6q1_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você sente que o trabalho que você faz é importante?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s6q2_1" name="s6q2" value="1" required><label for="s6q2_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s6q2_2" name="s6q2" value="2"><label for="s6q2_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s6q2_3" name="s6q2" value="3"><label for="s6q2_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s6q2_4" name="s6q2" value="4"><label for="s6q2_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s6q2_5" name="s6q2" value="5"><label for="s6q2_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você tem orgulho de fazer parte desta organização?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s6q3_1" name="s6q3" value="1" required><label for="s6q3_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s6q3_2" name="s6q3" value="2"><label for="s6q3_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s6q3_3" name="s6q3" value="3"><label for="s6q3_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s6q3_4" name="s6q3" value="4"><label for="s6q3_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s6q3_5" name="s6q3" value="5"><label for="s6q3_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você gosta de falar para os outros sobre o seu local de trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s6q4_1" name="s6q4" value="1" required><label for="s6q4_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s6q4_2" name="s6q4" value="2"><label for="s6q4_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s6q4_3" name="s6q4" value="3"><label for="s6q4_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s6q4_4" name="s6q4" value="4"><label for="s6q4_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s6q4_5" name="s6q4" value="5"><label for="s6q4_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você sente que o seu local de trabalho tem grande importância para você?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s6q5_1" name="s6q5" value="1" required><label for="s6q5_1" class="likert-label">1</label><span class="option-legend">Sempre</span></div><div class="likert-option"><input type="radio" id="s6q5_2" name="s6q5" value="2"><label for="s6q5_2" class="likert-label">2</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s6q5_3" name="s6q5" value="3"><label for="s6q5_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s6q5_4" name="s6q5" value="4"><label for="s6q5_4" class="likert-label">4</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s6q5_5" name="s6q5" value="5"><label for="s6q5_5" class="likert-label">5</label><span class="option-legend">Nunca/Quase Nunca</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 8: Acordos e Procedimentos -->
+                <div class="form-step" data-title="Acordos e Procedimentos">
+                     <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">O seu trabalho tem objetivos claros?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s7q1_1" name="s7q1" value="1" required><label for="s7q1_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s7q1_2" name="s7q1" value="2"><label for="s7q1_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s7q1_3" name="s7q1" value="3"><label for="s7q1_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s7q1_4" name="s7q1" value="4"><label for="s7q1_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s7q1_5" name="s7q1" value="5"><label for="s7q1_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você sabe exatamente quais as áreas são de sua responsabilidade?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s7q2_1" name="s7q2" value="1" required><label for="s7q2_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s7q2_2" name="s7q2" value="2"><label for="s7q2_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s7q2_3" name="s7q2" value="3"><label for="s7q2_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s7q2_4" name="s7q2" value="4"><label for="s7q2_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s7q2_5" name="s7q2" value="5"><label for="s7q2_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você sabe exatamente o que se espera de você no seu trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s7q3_1" name="s7q3" value="1" required><label for="s7q3_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s7q3_2" name="s7q3" value="2"><label for="s7q3_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s7q3_3" name="s7q3" value="3"><label for="s7q3_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s7q3_4" name="s7q3" value="4"><label for="s7q3_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s7q3_5" name="s7q3" value="5"><label for="s7q3_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                     </div>
+                </div>
+
+                <!-- Step 9: Supervisão e liderança -->
+                <div class="form-step" data-title="Supervisão e liderança">
+                    <p class="page-intro">Em que medida você diria que sua supervisão imediata...</p>
+                    <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">...garante que os membros da equipe tenham boas oportunidades para desenvolvimento?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s75q1_1" name="s75q1" value="1" required><label for="s75q1_1" class="likert-label">1</label><span class="option-legend">Eu não tenho um(a) superior(a)</span></div><div class="likert-option"><input type="radio" id="s75q1_2" name="s75q1" value="2"><label for="s75q1_2" class="likert-label">2</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s75q1_3" name="s75q1" value="3"><label for="s75q1_3" class="likert-label">3</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s75q1_4" name="s75q1" value="4"><label for="s75q1_4" class="likert-label">4</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s75q1_5" name="s75q1" value="5"><label for="s75q1_5" class="likert-label">5</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s75q1_6" name="s75q1" value="6"><label for="s75q1_6" class="likert-label">6</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">... prioriza à satisfação com o trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s75q2_1" name="s75q2" value="1" required><label for="s75q2_1" class="likert-label">1</label><span class="option-legend">Eu não tenho um(a) superior(a)</span></div><div class="likert-option"><input type="radio" id="s75q2_2" name="s75q2" value="2"><label for="s75q2_2" class="likert-label">2</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s75q2_3" name="s75q2" value="3"><label for="s75q2_3" class="likert-label">3</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s75q2_4" name="s75q2" value="4"><label for="s75q2_4" class="likert-label">4</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s75q2_5" name="s75q2" value="5"><label for="s75q2_5" class="likert-label">5</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s75q2_6" name="s75q2" value="6"><label for="s75q2_6" class="likert-label">6</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...é adequada no planejamento do trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s75q3_1" name="s75q3" value="1" required><label for="s75q3_1" class="likert-label">1</label><span class="option-legend">Eu não tenho um(a) superior(a)</span></div><div class="likert-option"><input type="radio" id="s75q3_2" name="s75q3" value="2"><label for="s75q3_2" class="likert-label">2</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s75q3_3" name="s75q3" value="3"><label for="s75q3_3" class="likert-label">3</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s75q3_4" name="s75q3" value="4"><label for="s75q3_4" class="likert-label">4</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s75q3_5" name="s75q3" value="5"><label for="s75q3_5" class="likert-label">5</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s75q3_6" name="s75q3" value="6"><label for="s75q3_6" class="likert-label">6</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...é adequada na resolução de conflitos?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s75q4_1" name="s75q4" value="1" required><label for="s75q4_1" class="likert-label">1</label><span class="option-legend">Eu não tenho um(a) superior(a)</span></div><div class="likert-option"><input type="radio" id="s75q4_2" name="s75q4" value="2"><label for="s75q4_2" class="likert-label">2</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s75q4_3" name="s75q4" value="3"><label for="s75q4_3" class="likert-label">3</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s75q4_4" name="s75q4" value="4"><label for="s75q4_4" class="likert-label">4</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s75q4_5" name="s75q4" value="5"><label for="s75q4_5" class="likert-label">5</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s75q4_6" name="s75q4" value="6"><label for="s75q4_6" class="likert-label">6</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                    </div>
+                </div>
+                
+                <!-- Step 10: Relacionamento -->
+                <div class="form-step" data-title="Relacionamento">
+                    <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">Com que frequência você conseguiria apoio e ajuda dos seus colegas?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s8q1_1" name="s8q1" value="1" required><label for="s8q1_1" class="likert-label">1</label><span class="option-legend">Eu não tenho uma supervisão imediata/ colegas</span></div><div class="likert-option"><input type="radio" id="s8q1_2" name="s8q1" value="2"><label for="s8q1_2" class="likert-label">2</label><span class="option-legend">Nunca/Quase Nunca</span></div><div class="likert-option"><input type="radio" id="s8q1_3" name="s8q1" value="3"><label for="s8q1_3" class="likert-label">3</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s8q1_4" name="s8q1" value="4"><label for="s8q1_4" class="likert-label">4</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s8q1_5" name="s8q1" value="5"><label for="s8q1_5" class="likert-label">5</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s8q1_6" name="s8q1" value="6"><label for="s8q1_6" class="likert-label">6</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Com que frequência os seus colegas estariam dispostos a ouvir sobre os seus problemas no trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s8q2_1" name="s8q2" value="1" required><label for="s8q2_1" class="likert-label">1</label><span class="option-legend">Eu não tenho uma supervisão imediata/ colegas</span></div><div class="likert-option"><input type="radio" id="s8q2_2" name="s8q2" value="2"><label for="s8q2_2" class="likert-label">2</label><span class="option-legend">Nunca/Quase Nunca</span></div><div class="likert-option"><input type="radio" id="s8q2_3" name="s8q2" value="3"><label for="s8q2_3" class="likert-label">3</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s8q2_4" name="s8q2" value="4"><label for="s8q2_4" class="likert-label">4</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s8q2_5" name="s8q2" value="5"><label for="s8q2_5" class="likert-label">5</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s8q2_6" name="s8q2" value="6"><label for="s8q2_6" class="likert-label">6</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Com que frequência a sua supervisão imediata estaria disposta a lhe ouvir sobre os seus problemas no trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s8q3_1" name="s8q3" value="1" required><label for="s8q3_1" class="likert-label">1</label><span class="option-legend">Eu não tenho uma supervisão imediata/ colegas</span></div><div class="likert-option"><input type="radio" id="s8q3_2" name="s8q3" value="2"><label for="s8q3_2" class="likert-label">2</label><span class="option-legend">Nunca/Quase Nunca</span></div><div class="likert-option"><input type="radio" id="s8q3_3" name="s8q3" value="3"><label for="s8q3_3" class="likert-label">3</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s8q3_4" name="s8q3" value="4"><label for="s8q3_4" class="likert-label">4</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s8q3_5" name="s8q3" value="5"><label for="s8q3_5" class="likert-label">5</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s8q3_6" name="s8q3" value="6"><label for="s8q3_6" class="likert-label">6</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Com que frequência a sua supervisão imediata fala sobre o desempenho do seu trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s8q4_1" name="s8q4" value="1" required><label for="s8q4_1" class="likert-label">1</label><span class="option-legend">Eu não tenho uma supervisão imediata/ colegas</span></div><div class="likert-option"><input type="radio" id="s8q4_2" name="s8q4" value="2"><label for="s8q4_2" class="likert-label">2</label><span class="option-legend">Nunca/Quase Nunca</span></div><div class="likert-option"><input type="radio" id="s8q4_3" name="s8q4" value="3"><label for="s8q4_3" class="likert-label">3</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s8q4_4" name="s8q4" value="4"><label for="s8q4_4" class="likert-label">4</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s8q4_5" name="s8q4" value="5"><label for="s8q4_5" class="likert-label">5</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s8q4_6" name="s8q4" value="6"><label for="s8q4_6" class="likert-label">6</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Há um clima bom entre você e os seus colegas?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s8q5_1" name="s8q5" value="1" required><label for="s8q5_1" class="likert-label">1</label><span class="option-legend">Eu não tenho uma supervisão imediata/ colegas</span></div><div class="likert-option"><input type="radio" id="s8q5_2" name="s8q5" value="2"><label for="s8q5_2" class="likert-label">2</label><span class="option-legend">Nunca/Quase Nunca</span></div><div class="likert-option"><input type="radio" id="s8q5_3" name="s8q5" value="3"><label for="s8q5_3" class="likert-label">3</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s8q5_4" name="s8q5" value="4"><label for="s8q5_4" class="likert-label">4</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s8q5_5" name="s8q5" value="5"><label for="s8q5_5" class="likert-label">5</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s8q5_6" name="s8q5" value="6"><label for="s8q5_6" class="likert-label">6</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Há uma boa cooperação entre os colegas no trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s8q6_1" name="s8q6" value="1" required><label for="s8q6_1" class="likert-label">1</label><span class="option-legend">Eu não tenho uma supervisão imediata/ colegas</span></div><div class="likert-option"><input type="radio" id="s8q6_2" name="s8q6" value="2"><label for="s8q6_2" class="likert-label">2</label><span class="option-legend">Nunca/Quase Nunca</span></div><div class="likert-option"><input type="radio" id="s8q6_3" name="s8q6" value="3"><label for="s8q6_3" class="likert-label">3</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s8q6_4" name="s8q6" value="4"><label for="s8q6_4" class="likert-label">4</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s8q6_5" name="s8q6" value="5"><label for="s8q6_5" class="likert-label">5</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s8q6_6" name="s8q6" value="6"><label for="s8q6_6" class="likert-label">6</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você se sente como parte de uma equipe no seu local de trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s8q7_1" name="s8q7" value="1" required><label for="s8q7_1" class="likert-label">1</label><span class="option-legend">Eu não tenho uma supervisão imediata/ colegas</span></div><div class="likert-option"><input type="radio" id="s8q7_2" name="s8q7" value="2"><label for="s8q7_2" class="likert-label">2</label><span class="option-legend">Nunca/Quase Nunca</span></div><div class="likert-option"><input type="radio" id="s8q7_3" name="s8q7" value="3"><label for="s8q7_3" class="likert-label">3</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s8q7_4" name="s8q7" value="4"><label for="s8q7_4" class="likert-label">4</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s8q7_5" name="s8q7" value="5"><label for="s8q7_5" class="likert-label">5</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s8q7_6" name="s8q7" value="6"><label for="s8q7_6" class="likert-label">6</label><span class="option-legend">Sempre</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 11: Trabalho como um Todo -->
+                <div class="form-step" data-title="Trabalho como um Todo">
+                    <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">A gerência confia que os empregados façam um bom trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s9q1_1" name="s9q1" value="1" required><label for="s9q1_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s9q1_2" name="s9q1" value="2"><label for="s9q1_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s9q1_3" name="s9q1" value="3"><label for="s9q1_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s9q1_4" name="s9q1" value="4"><label for="s9q1_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s9q1_5" name="s9q1" value="5"><label for="s9q1_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Os conflitos são resolvidos de modo justo?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s9q2_1" name="s9q2" value="1" required><label for="s9q2_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s9q2_2" name="s9q2" value="2"><label for="s9q2_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s9q2_3" name="s9q2" value="3"><label for="s9q2_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s9q2_4" name="s9q2" value="4"><label for="s9q2_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s9q2_5" name="s9q2" value="5"><label for="s9q2_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">O trabalho é distribuído de maneira justa?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s9q3_1" name="s9q3" value="1" required><label for="s9q3_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s9q3_2" name="s9q3" value="2"><label for="s9q3_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s9q3_3" name="s9q3" value="3"><label for="s9q3_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s9q3_4" name="s9q3" value="4"><label for="s9q3_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s9q3_5" name="s9q3" value="5"><label for="s9q3_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Os empregados são reconhecidos por fazer um bom trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s9q4_1" name="s9q4" value="1" required><label for="s9q4_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s9q4_2" name="s9q4" value="2"><label for="s9q4_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s9q4_3" name="s9q4" value="3"><label for="s9q4_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s9q4_4" name="s9q4" value="4"><label for="s9q4_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s9q4_5" name="s9q4" value="5"><label for="s9q4_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">As sugestões dos empregados são tratadas com seriedade pela gerência?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s9q5_1" name="s9q5" value="1" required><label for="s9q5_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s9q5_2" name="s9q5" value="2"><label for="s9q5_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s9q5_3" name="s9q5" value="3"><label for="s9q5_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s9q5_4" name="s9q5" value="4"><label for="s9q5_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s9q5_5" name="s9q5" value="5"><label for="s9q5_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">O seu trabalho é reconhecido e apreciado pela gerência?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s9q6_1" name="s9q6" value="1" required><label for="s9q6_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s9q6_2" name="s9q6" value="2"><label for="s9q6_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s9q6_3" name="s9q6" value="3"><label for="s9q6_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s9q6_4" name="s9q6" value="4"><label for="s9q6_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s9q6_5" name="s9q6" value="5"><label for="s9q6_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você é respeitado por sua gerência?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s9q7_1" name="s9q7" value="1" required><label for="s9q7_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s9q7_2" name="s9q7" value="2"><label for="s9q7_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s9q7_3" name="s9q7" value="3"><label for="s9q7_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s9q7_4" name="s9q7" value="4"><label for="s9q7_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s9q7_5" name="s9q7" value="5"><label for="s9q7_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Você é tratado de maneira justa no seu local de trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s9q8_1" name="s9q8" value="1" required><label for="s9q8_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s9q8_2" name="s9q8" value="2"><label for="s9q8_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s9q8_3" name="s9q8" value="3"><label for="s9q8_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s9q8_4" name="s9q8" value="4"><label for="s9q8_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s9q8_5" name="s9q8" value="5"><label for="s9q8_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Os empregados confiam uns nos outros, no geral?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s9q9_1" name="s9q9" value="1" required><label for="s9q9_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s9q9_2" name="s9q9" value="2"><label for="s9q9_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s9q9_3" name="s9q9" value="3"><label for="s9q9_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s9q9_4" name="s9q9" value="4"><label for="s9q9_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s9q9_5" name="s9q9" value="5"><label for="s9q9_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 12: Estado Mental - Preocupações -->
+                <div class="form-step" data-title="Estado Mental - Preocupações">
+                    <p class="page-intro">Você está preocupado com...</p>
+                    <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">...que as novas tecnologias tornem você dispensável?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s10q1_1" name="s10q1" value="1" required><label for="s10q1_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s10q1_2" name="s10q1" value="2"><label for="s10q1_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s10q1_3" name="s10q1" value="3"><label for="s10q1_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s10q1_4" name="s10q1" value="4"><label for="s10q1_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s10q1_5" name="s10q1" value="5"><label for="s10q1_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...ser transferido(a) para outra função ou local contra a sua vontade?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s10q2_1" name="s10q2" value="1" required><label for="s10q2_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s10q2_2" name="s10q2" value="2"><label for="s10q2_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s10q2_3" name="s10q2" value="3"><label for="s10q2_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s10q2_4" name="s10q2" value="4"><label for="s10q2_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s10q2_5" name="s10q2" value="5"><label for="s10q2_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...que o cronograma seja alterado contra a sua vontade?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s10q3_1" name="s10q3" value="1" required><label for="s10q3_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s10q3_2" name="s10q3" value="2"><label for="s10q3_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s10q3_3" name="s10q3" value="3"><label for="s10q3_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s10q3_4" name="s10q3" value="4"><label for="s10q3_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s10q3_5" name="s10q3" value="5"><label for="s10q3_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...que as suas tarefas de trabalho sejam alteradas contra a sua vontade?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s10q4_1" name="s10q4" value="1" required><label for="s10q4_1" class="likert-label">1</label><span class="option-legend">Em muita pouca medida</span></div><div class="likert-option"><input type="radio" id="s10q4_2" name="s10q4" value="2"><label for="s10q4_2" class="likert-label">2</label><span class="option-legend">Em pequena medida</span></div><div class="likert-option"><input type="radio" id="s10q4_3" name="s10q4" value="3"><label for="s10q4_3" class="likert-label">3</label><span class="option-legend">Um pouco</span></div><div class="likert-option"><input type="radio" id="s10q4_4" name="s10q4" value="4"><label for="s10q4_4" class="likert-label">4</label><span class="option-legend">Em grande medida</span></div><div class="likert-option"><input type="radio" id="s10q4_5" name="s10q4" value="5"><label for="s10q4_5" class="likert-label">5</label><span class="option-legend">Em muita grande medida</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 13: Satisfação com o Trabalho -->
+                <div class="form-step" data-title="Satisfação com o Trabalho">
+                    <p class="page-intro">Em relação ao seu trabalho em geral. Quão satisfeito você está com ...</p>
+                    <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">...suas perspectivas de trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s11q1_1" name="s11q1" value="1" required><label for="s11q1_1" class="likert-label">1</label><span class="option-legend">Muito Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q1_2" name="s11q1" value="2"><label for="s11q1_2" class="likert-label">2</label><span class="option-legend">Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q1_3" name="s11q1" value="3"><label for="s11q1_3" class="likert-label">3</label><span class="option-legend">Neutro</span></div><div class="likert-option"><input type="radio" id="s11q1_4" name="s11q1" value="4"><label for="s11q1_4" class="likert-label">4</label><span class="option-legend">Satisfeito</span></div><div class="likert-option"><input type="radio" id="s11q1_5" name="s11q1" value="5"><label for="s11q1_5" class="likert-label">5</label><span class="option-legend">Muito Satisfeito</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...os recursos e os materiais de trabalho?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s11q2_1" name="s11q2" value="1" required><label for="s11q2_1" class="likert-label">1</label><span class="option-legend">Muito Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q2_2" name="s11q2" value="2"><label for="s11q2_2" class="likert-label">2</label><span class="option-legend">Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q2_3" name="s11q2" value="3"><label for="s11q2_3" class="likert-label">3</label><span class="option-legend">Neutro</span></div><div class="likert-option"><input type="radio" id="s11q2_4" name="s11q2" value="4"><label for="s11q2_4" class="likert-label">4</label><span class="option-legend">Satisfeito</span></div><div class="likert-option"><input type="radio" id="s11q2_5" name="s11q2" value="5"><label for="s11q2_5" class="likert-label">5</label><span class="option-legend">Muito Satisfeito</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...o modo como as suas habilidades são usadas?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s11q3_1" name="s11q3" value="1" required><label for="s11q3_1" class="likert-label">1</label><span class="option-legend">Muito Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q3_2" name="s11q3" value="2"><label for="s11q3_2" class="likert-label">2</label><span class="option-legend">Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q3_3" name="s11q3" value="3"><label for="s11q3_3" class="likert-label">3</label><span class="option-legend">Neutro</span></div><div class="likert-option"><input type="radio" id="s11q3_4" name="s11q3" value="4"><label for="s11q3_4" class="likert-label">4</label><span class="option-legend">Satisfeito</span></div><div class="likert-option"><input type="radio" id="s11q3_5" name="s11q3" value="5"><label for="s11q3_5" class="likert-label">5</label><span class="option-legend">Muito Satisfeito</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...o seu salário?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s11q4_1" name="s11q4" value="1" required><label for="s11q4_1" class="likert-label">1</label><span class="option-legend">Muito Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q4_2" name="s11q4" value="2"><label for="s11q4_2" class="likert-label">2</label><span class="option-legend">Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q4_3" name="s11q4" value="3"><label for="s11q4_3" class="likert-label">3</label><span class="option-legend">Neutro</span></div><div class="likert-option"><input type="radio" id="s11q4_4" name="s11q4" value="4"><label for="s11q4_4" class="likert-label">4</label><span class="option-legend">Satisfeito</span></div><div class="likert-option"><input type="radio" id="s11q4_5" name="s11q4" value="5"><label for="s11q4_5" class="likert-label">5</label><span class="option-legend">Muito Satisfeito</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...o seu emprego como um todo, levando tudo em conta?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s11q5_1" name="s11q5" value="1" required><label for="s11q5_1" class="likert-label">1</label><span class="option-legend">Muito Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q5_2" name="s11q5" value="2"><label for="s11q5_2" class="likert-label">2</label><span class="option-legend">Insatisfeito</span></div><div class="likert-option"><input type="radio" id="s11q5_3" name="s11q5" value="3"><label for="s11q5_3" class="likert-label">3</label><span class="option-legend">Neutro</span></div><div class="likert-option"><input type="radio" id="s11q5_4" name="s11q5" value="4"><label for="s11q5_4" class="likert-label">4</label><span class="option-legend">Satisfeito</span></div><div class="likert-option"><input type="radio" id="s11q5_5" name="s11q5" value="5"><label for="s11q5_5" class="likert-label">5</label><span class="option-legend">Muito Satisfeito</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 14: Trabalho e Saúde -->
+                <div class="form-step" data-title="Trabalho e Saúde">
+                    <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">No meu trabalho, sou cheio de energia.</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q1_1" name="s12q1" value="1" required><label for="s12q1_1" class="likert-label">1</label><span class="option-legend">Nunca/ Quase Nunca</span></div><div class="likert-option"><input type="radio" id="s12q1_2" name="s12q1" value="2"><label for="s12q1_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q1_3" name="s12q1" value="3"><label for="s12q1_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s12q1_4" name="s12q1" value="4"><label for="s12q1_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q1_5" name="s12q1" value="5"><label for="s12q1_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Sou entusiasmado com o meu trabalho.</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q2_1" name="s12q2" value="1" required><label for="s12q2_1" class="likert-label">1</label><span class="option-legend">Nunca/ Quase Nunca</span></div><div class="likert-option"><input type="radio" id="s12q2_2" name="s12q2" value="2"><label for="s12q2_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q2_3" name="s12q2" value="3"><label for="s12q2_3" class="likert-label">3</label><span class="option-legend">Algumas vezes</span></div><div class="likert-option"><input type="radio" id="s12q2_4" name="s12q2" value="4"><label for="s12q2_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q2_5" name="s12q2" value="5"><label for="s12q2_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group"><label for="s12q3" class="block mb-2 font-medium text-center text-lg">Em geral, você diria que a sua saúde é:</label><select id="s12q3" name="s12q3" class="w-full max-w-sm mx-auto p-3 border border-gray-300 rounded-lg" required><option value="">Selecione...</option><option value="excelente">Excelente</option><option value="muito_boa">Muito boa</option><option value="boa">Boa</option><option value="razoavel">Razoável</option><option value="ruim">Ruim</option></select></div>
+                        <p class="page-intro">Para cada uma das seguintes afirmações, considerando como você tem passado durante as 4 últimas semanas, com que frequência ...</p>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...tem dormido mal e inquieto?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q4_1" name="s12q4" value="1" required><label for="s12q4_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q4_2" name="s12q4" value="2"><label for="s12q4_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q4_3" name="s12q4" value="3"><label for="s12q4_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q4_4" name="s12q4" value="4"><label for="s12q4_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q4_5" name="s12q4" value="5"><label for="s12q4_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...tem encontrado dificuldade para dormir?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q5_1" name="s12q5" value="1" required><label for="s12q5_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q5_2" name="s12q5" value="2"><label for="s12q5_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q5_3" name="s12q5" value="3"><label for="s12q5_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q5_4" name="s12q5" value="4"><label for="s12q5_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q5_5" name="s12q5" value="5"><label for="s12q5_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...acorda muito cedo e não é capaz de voltar a dormir?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q6_1" name="s12q6" value="1" required><label for="s12q6_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q6_2" name="s12q6" value="2"><label for="s12q6_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q6_3" name="s12q6" value="3"><label for="s12q6_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q6_4" name="s12q6" value="4"><label for="s12q6_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q6_5" name="s12q6" value="5"><label for="s12q6_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...se sente emocionalmente exausto?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q7_1" name="s12q7" value="1" required><label for="s12q7_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q7_2" name="s12q7" value="2"><label for="s12q7_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q7_3" name="s12q7" value="3"><label for="s12q7_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q7_4" name="s12q7" value="4"><label for="s12q7_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q7_5" name="s12q7" value="5"><label for="s12q7_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...se sente esgotado?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q8_1" name="s12q8" value="1" required><label for="s12q8_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q8_2" name="s12q8" value="2"><label for="s12q8_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q8_3" name="s12q8" value="3"><label for="s12q8_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q8_4" name="s12q8" value="4"><label for="s12q8_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q8_5" name="s12q8" value="5"><label for="s12q8_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...tem dificuldades para relaxar?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q9_1" name="s12q9" value="1" required><label for="s12q9_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q9_2" name="s12q9" value="2"><label for="s12q9_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q9_3" name="s12q9" value="3"><label for="s12q9_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q9_4" name="s12q9" value="4"><label for="s12q9_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q9_5" name="s12q9" value="5"><label for="s12q9_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...vem se sentindo tenso?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q10_1" name="s12q10" value="1" required><label for="s12q10_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q10_2" name="s12q10" value="2"><label for="s12q10_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q10_3" name="s12q10" value="3"><label for="s12q10_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q10_4" name="s12q10" value="4"><label for="s12q10_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q10_5" name="s12q10" value="5"><label for="s12q10_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...sente falta de interesse pelas coisas cotidianas?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q11_1" name="s12q11" value="1" required><label for="s12q11_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q11_2" name="s12q11" value="2"><label for="s12q11_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q11_3" name="s12q11" value="3"><label for="s12q11_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q11_4" name="s12q11" value="4"><label for="s12q11_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q11_5" name="s12q11" value="5"><label for="s12q11_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...vem tendo dores de estômago?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q12_1" name="s12q12" value="1" required><label for="s12q12_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q12_2" name="s12q12" value="2"><label for="s12q12_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q12_3" name="s12q12" value="3"><label for="s12q12_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q12_4" name="s12q12" value="4"><label for="s12q12_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q12_5" name="s12q12" value="5"><label for="s12q12_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...vem tendo palpitações?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q13_1" name="s12q13" value="1" required><label for="s12q13_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q13_2" name="s12q13" value="2"><label for="s12q13_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q13_3" name="s12q13" value="3"><label for="s12q13_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q13_4" name="s12q13" value="4"><label for="s12q13_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q13_5" name="s12q13" value="5"><label for="s12q13_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...tem dores de cabeça?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q14_1" name="s12q14" value="1" required><label for="s12q14_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q14_2" name="s12q14" value="2"><label for="s12q14_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q14_3" name="s12q14" value="3"><label for="s12q14_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q14_4" name="s12q14" value="4"><label for="s12q14_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q14_5" name="s12q14" value="5"><label for="s12q14_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...sente tensão em diversos músculos?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q15_1" name="s12q15" value="1" required><label for="s12q15_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q15_2" name="s12q15" value="2"><label for="s12q15_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q15_3" name="s12q15" value="3"><label for="s12q15_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q15_4" name="s12q15" value="4"><label for="s12q15_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q15_5" name="s12q15" value="5"><label for="s12q15_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...vem tendo dificuldades para se concentrar?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q16_1" name="s12q16" value="1" required><label for="s12q16_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q16_2" name="s12q16" value="2"><label for="s12q16_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q16_3" name="s12q16" value="3"><label for="s12q16_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q16_4" name="s12q16" value="4"><label for="s12q16_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q16_5" name="s12q16" value="5"><label for="s12q16_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...sente dificuldade em tomar decisões?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q17_1" name="s12q17" value="1" required><label for="s12q17_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q17_2" name="s12q17" value="2"><label for="s12q17_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q17_3" name="s12q17" value="3"><label for="s12q17_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q17_4" name="s12q17" value="4"><label for="s12q17_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q17_5" name="s12q17" value="5"><label for="s12q17_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...sente dificuldades de memória?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q18_1" name="s12q18" value="1" required><label for="s12q18_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q18_2" name="s12q18" value="2"><label for="s12q18_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q18_3" name="s12q18" value="3"><label for="s12q18_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q18_4" name="s12q18" value="4"><label for="s12q18_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q18_5" name="s12q18" value="5"><label for="s12q18_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...tem achado difícil pensar com clareza?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q19_1" name="s12q19" value="1" required><label for="s12q19_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q19_2" name="s12q19" value="2"><label for="s12q19_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q19_3" name="s12q19" value="3"><label for="s12q19_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q19_4" name="s12q19" value="4"><label for="s12q19_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q19_5" name="s12q19" value="5"><label for="s12q19_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...vem se sentindo triste?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q20_1" name="s12q20" value="1" required><label for="s12q20_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q20_2" name="s12q20" value="2"><label for="s12q20_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q20_3" name="s12q20" value="3"><label for="s12q20_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q20_4" name="s12q20" value="4"><label for="s12q20_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q20_5" name="s12q20" value="5"><label for="s12q20_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">...vem sentindo a consciência pesada ou culpa?</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s12q21_1" name="s12q21" value="1" required><label for="s12q21_1" class="likert-label">1</label><span class="option-legend">Nunca</span></div><div class="likert-option"><input type="radio" id="s12q21_2" name="s12q21" value="2"><label for="s12q21_2" class="likert-label">2</label><span class="option-legend">Raramente</span></div><div class="likert-option"><input type="radio" id="s12q21_3" name="s12q21" value="3"><label for="s12q21_3" class="likert-label">3</label><span class="option-legend">Às vezes</span></div><div class="likert-option"><input type="radio" id="s12q21_4" name="s12q21" value="4"><label for="s12q21_4" class="likert-label">4</label><span class="option-legend">Frequentemente</span></div><div class="likert-option"><input type="radio" id="s12q21_5" name="s12q21" value="5"><label for="s12q21_5" class="likert-label">5</label><span class="option-legend">Sempre</span></div></div></div>
+                    </div>
+                </div>
+
+                <!-- Step 15: Valores ou Características Pessoais -->
+                <div class="form-step" data-title="Valores Pessoais">
+                    <div class="space-y-8">
+                        <div class="question-group text-center"><p class="font-medium text-lg">É fácil para mim manter os meus planos e alcançar os meus objetivos.</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s13q1_1" name="s13q1" value="1" required><label for="s13q1_1" class="likert-label">1</label><span class="option-legend">Não me descreve</span></div><div class="likert-option"><input type="radio" id="s13q1_2" name="s13q1" value="2"><label for="s13q1_2" class="likert-label">2</label><span class="option-legend">Descreve-me um pouco</span></div><div class="likert-option"><input type="radio" id="s13q1_3" name="s13q1" value="3"><label for="s13q1_3" class="likert-label">3</label><span class="option-legend">Descreve-me muito bem</span></div><div class="likert-option"><input type="radio" id="s13q1_4" name="s13q1" value="4"><label for="s13q1_4" class="likert-label">4</label><span class="option-legend">Descreve-me perfeitamente</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Sinto-me confiante de que consigo lidar com eventos inesperados.</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s13q2_1" name="s13q2" value="1" required><label for="s13q2_1" class="likert-label">1</label><span class="option-legend">Não me descreve</span></div><div class="likert-option"><input type="radio" id="s13q2_2" name="s13q2" value="2"><label for="s13q2_2" class="likert-label">2</label><span class="option-legend">Descreve-me um pouco</span></div><div class="likert-option"><input type="radio" id="s13q2_3" name="s13q2" value="3"><label for="s13q2_3" class="likert-label">3</label><span class="option-legend">Descreve-me muito bem</span></div><div class="likert-option"><input type="radio" id="s13q2_4" name="s13q2" value="4"><label for="s13q2_4" class="likert-label">4</label><span class="option-legend">Descreve-me perfeitamente</span></div></div></div>
+                        <div class="question-group text-center"><p class="font-medium text-lg">Quando tenho um problema, normalmente consigo encontrar diversas maneiras de resolvê-lo.</p><div class="likert-scale"><div class="likert-option"><input type="radio" id="s13q3_1" name="s13q3" value="1" required><label for="s13q3_1" class="likert-label">1</label><span class="option-legend">Não me descreve</span></div><div class="likert-option"><input type="radio" id="s13q3_2" name="s13q3" value="2"><label for="s13q3_2" class="likert-label">2</label><span class="option-legend">Descreve-me um pouco</span></div><div class="likert-option"><input type="radio" id="s13q3_3" name="s13q3" value="3"><label for="s13q3_3" class="likert-label">3</label><span class="option-legend">Descreve-me muito bem</span></div><div class="likert-option"><input type="radio" id="s13q3_4" name="s13q3" value="4"><label for="s13q3_4" class="likert-label">4</label><span class="option-legend">Descreve-me perfeitamente</span></div></div></div>
+                    </div>
+                </div>
+
+
+                <!-- Final Step -->
+                <div class="form-step" data-title="Conclusão">
+                     <div class="text-center p-4 md:p-8">
+                        <h2 class="text-3xl font-bold mb-4">Última Pergunta</h2>
+                        <div class="mt-8">
+                            <label for="D1" class="block mb-2 font-medium text-left">Você tem alguma sugestão / pedido para melhorar suas condições psicossociais de trabalho?</label>
+                            <p class="text-sm text-gray-500 mb-2 text-left">(Opcional. As informações fornecidas aqui serão incorporadas a um relatório geral de forma anônima.)</p>
+                            <textarea id="D1" name="D1" rows="5" class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="mt-12 pt-8 border-t border-gray-200 flex justify-between items-center">
+                    <button type="button" id="prev-btn" class="btn btn-secondary" style="display: none;">Anterior</button>
+                    <button type="button" id="next-btn" class="btn btn-primary ml-auto">Próximo</button>
+                    <button type="submit" id="submit-btn" class="btn btn-primary" style="display: none;">Finalizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const landingPage = document.getElementById('landing-page');
+        const startBtn = document.getElementById('start-btn');
+        const quizWrapper = document.getElementById('quiz-wrapper');
+        const form = document.getElementById('mental-health-form');
+        const steps = Array.from(form.querySelectorAll('.form-step'));
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const stepTitle = document.getElementById('step-title');
+        const progressPercentage = document.getElementById('progress-percentage');
+        let currentStep = 0;
+
+        startBtn.addEventListener('click', () => {
+            landingPage.style.display = 'none';
+            quizWrapper.style.display = 'block';
+            steps[0].classList.add('active');
+            updateFormState();
+        });
+
+        const updateFormState = () => {
+            steps.forEach((step, index) => {
+                step.classList.toggle('active', index === currentStep);
+            });
+
+            const progress = ((currentStep + 1) / (steps.length)) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressPercentage.textContent = `${Math.round(progress)}%`;
+            stepTitle.textContent = steps[currentStep].dataset.title;
+
+            prevBtn.style.display = currentStep > 0 ? 'inline-block' : 'none';
+            nextBtn.style.display = currentStep < steps.length - 1 ? 'inline-block' : 'none';
+            submitBtn.style.display = currentStep === steps.length - 1 ? 'inline-block' : 'none';
+        };
+
+        const validateStep = (stepIndex) => {
+            const currentStepElement = steps[stepIndex];
+            const inputs = currentStepElement.querySelectorAll('input[required], select[required]');
+            let isValid = true;
+            for (const input of inputs) {
+                if (input.type === 'radio') {
+                    const radioGroup = document.getElementsByName(input.name);
+                    if (![...radioGroup].some(r => r.checked)) {
+                         isValid = false;
+                         break;
+                    }
+                } else if (!input.value.trim()) {
+                    isValid = false;
+                    break;
+                }
+            }
+            if (!isValid) {
+                 alert('Por favor, preencha todos os campos obrigatórios para continuar.');
+            }
+            return isValid;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (validateStep(currentStep) && currentStep < steps.length - 1) {
+                currentStep++;
+                updateFormState();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateFormState();
+            }
+        });
+
+form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // URL do seu Google Apps Script (cole a URL que você copiou no Passo 2)
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziRveORQLb_WWOzQ4YMx8hg4WghZpRVDyekXvFg8Q1oewLXv391wQJniPev-I_NnC0ng/exec";
+
+            // Mostra uma mensagem de "enviando..." para o usuário
+            const quizWrapper = document.getElementById('quiz-wrapper');
+            quizWrapper.innerHTML = `
+                <div class="text-center p-8 bg-white rounded-2xl shadow-xl">
+                    <h2 class="text-3xl font-bold mb-4" style="color: var(--primary-darker);">Enviando suas respostas...</h2>
+                    <p class="text-lg text-gray-600">Por favor, aguarde.</p>
+                </div>
+            `;
+
+            const formData = new FormData(form);
+            const data = {};
+            const headers = [
+                "Timestamp",
+                // Dimensão 1: Pessoa e Local de Trabalho
+                "Área/Departamento", "Sexo", "Idade", "Cargo Atual", "Supervisiona outros?", "É efetivo?", "Trabalha em tempo integral?",
+                // Dimensão 2: Trabalho e Atividades
+                "Carga de trabalho desigual?", "Falta de tempo para tarefas?", "Precisa esconder opinião?",
+                // Dimensão 3: Equilíbrio Pessoal e Profissional
+                "Precisa estar em casa e trabalho ao mesmo tempo?", "Trabalho afeta energia para vida privada?", "Exigências do trabalho interferem na vida privada?", "Precisa alterar planos privados por conta do trabalho?", "Trabalho requer muito tempo e afeta vida privada?",
+                // Dimensão 4: Influência e Liberdade
+                "Influência nas decisões?", "Influência na velocidade do trabalho?", "Influência em COMO faz o trabalho?", "Influência em O QUE faz no trabalho?",
+                // Dimensão 5: Oportunidades de Desenvolvimento
+                "Trabalho é variado?", "Faz o mesmo tipo de atividade diversas vezes?", "Possibilidade de aprender coisas novas?", "Consegue usar suas habilidades/experiência?", "Trabalho dá oportunidade de desenvolver habilidades?",
+                // Dimensão 6: Significado do Trabalho
+                "Trabalho é significativo?", "Sente que o trabalho é importante?", "Orgulho de fazer parte da organização?", "Gosta de falar sobre o local de trabalho?", "Local de trabalho tem grande importância?",
+                // Dimensão 7: Acordos e Procedimentos
+                "Trabalho tem objetivos claros?", "Sabe quais são suas áreas de responsabilidade?", "Sabe o que se espera de você?",
+                // Dimensão 8: Supervisão/Liderança
+                "Supervisor garante oportunidades de desenvolvimento?", "Supervisor prioriza a satisfação?", "Supervisor é adequado no planejamento?", "Supervisor é adequado na resolução de conflitos?",
+                // Dimensão 9: Relacionamento
+                "Apoio e ajuda dos colegas?", "Colegas dispostos a ouvir?", "Supervisor disposto a ouvir?", "Supervisor fala sobre desempenho?", "Clima bom com colegas?", "Boa cooperação entre colegas?", "Sente-se parte de uma equipe?",
+                // Dimensão 10: Trabalho como um Todo
+                "Gerência confia nos empregados?", "Conflitos resolvidos de modo justo?", "Trabalho distribuído de maneira justa?", "Empregados são reconhecidos?", "Sugestões são tratadas com seriedade?", "Trabalho é reconhecido e apreciado?", "É respeitado pela gerência?", "É tratado de maneira justa?", "Empregados confiam uns nos outros?",
+                // Dimensão 11: Estado Mental - Preocupações
+                "Preocupação com novas tecnologias?", "Preocupação com transferência indesejada?", "Preocupação com alteração de cronograma?", "Preocupação com alteração de tarefas?",
+                // Dimensão 12: Satisfação com o Trabalho
+                "Satisfação com perspectivas de trabalho?", "Satisfação com recursos e materiais?", "Satisfação com uso de habilidades?", "Satisfação com salário?", "Satisfação com emprego como um todo?",
+                // Dimensão 13: Trabalho e Saúde
+                "Cheio de energia no trabalho?", "Entusiasmado com o trabalho?", "Saúde em geral?", "Dorme mal e inquieto?", "Dificuldade para dormir?", "Acorda cedo e não volta a dormir?", "Sente-se emocionalmente exausto?", "Sente-se esgotado?", "Dificuldade para relaxar?", "Sentindo-se tenso?", "Falta de interesse nas coisas cotidianas?", "Dores de estômago?", "Palpitações?", "Dores de cabeça?", "Tensão muscular?", "Dificuldade de concentração?", "Dificuldade em tomar decisões?", "Dificuldades de memória?", "Dificuldade de pensar com clareza?", "Sentindo-se triste?", "Sentindo a consciência pesada ou culpa?",
+                // Dimensão 14: Valores ou Características Pessoais
+                "Fácil manter planos e alcançar objetivos?", "Confiante para lidar com eventos inesperados?", "Consegue encontrar maneiras de resolver problemas?",
+                // Pergunta Aberta Final
+                "Sugestões/Pedidos"
+            ];
+
+            let formNameCounter = 0;
+            // Mapeia os nomes dos campos do formulário para os nomes dos cabeçalhos da planilha.
+            formData.forEach((value, key) => {
+                // Pula o timestamp, pois ele será gerado pelo script.
+                const headerName = headers[formNameCounter + 1];
+                if(headerName) {
+                    data[headerName] = value;
+                }
+                formNameCounter++;
+            });
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(response => {
+                if (response.result === "success") {
+                    quizWrapper.innerHTML = `
+                        <div class="text-center p-8 bg-white rounded-2xl shadow-xl">
+                            <h2 class="text-3xl font-bold mb-4" style="color: var(--primary);">Questionário Enviado!</h2>
+                            <p class="text-lg text-gray-600">Agradecemos imensamente por sua participação e contribuição.</p>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(response.message || "Erro desconhecido ao enviar.");
+                }
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert("Ocorreu um erro ao enviar suas respostas. Por favor, tente novamente.");
+                // Opcional: recarregar o formulário ou a última etapa
+                updateFormState(); // volta para a ultima etapa
+            });
+        });
+    });
+    </script>
+</body>
+</html>
